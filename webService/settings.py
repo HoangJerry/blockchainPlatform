@@ -25,7 +25,7 @@ SECRET_KEY = '^)pu$md!q6x)2u0ihsd4rkq66^3)_0u6j16qhf%ns%%@#v2kwu'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*',]
 
 
 # Application definition
@@ -37,7 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'rest_framework',
+    'corsheaders',
+
+    'api',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -69,6 +76,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'webService.wsgi.application'
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # 'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.QueryParameterVersioning',
+    'PAGE_SIZE': 10,
+    'PAGINATE_BY': 10,  # Default to 10
+    'PAGINATE_BY_PARAM': 'page_size',  # Allow client to override, using `?page_size=xxx`.
+    'MAX_PAGINATE_BY': 10,  # Maximum limit allowed when using `?page_size=xxx`.
+
+
+    # Render data
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    )
+}
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
