@@ -7,13 +7,16 @@ This is a project support for viewing doctor and patient's information, The plat
 
 ### Prerequisites
 
-Prestarting you should install python
+Prestarting you should install:
 
 ```
-Python2, virtualenv, pip 
+Python2, virtualenv, pip, node, npm
 ```
+[mySQL server](https://github.com/PyMySQL/mysqlclient-python/)
 
 ### Installing
+
+## Backend
 
 Virtualen environment 
 
@@ -65,6 +68,25 @@ To run project, after that check localhost:8000
 ```
 python manage.py runserver
 ```
+## FrontEnd
+go to frontEnd directory
+```
+cd frontEnd
+```
+
+install node module
+```
+npm install
+```
+to run project on localhost:42000
+```
+npm start
+
+or 
+
+ng serve
+```
+
 ## Running the tests
 
 Explain how to run the automated tests for this system
@@ -87,8 +109,8 @@ Add additional notes about how to deploy this on a live system
 
 ## Built With
 
-* [Django](http://www.dropwizard.io/1.0.2/docs/) - The web framework used for webService
-* [Angular](https://maven.apache.org/) - The web framework used for frontEnd
+* [Django](https://www.djangoproject.com/) - The web framework used for webService
+* [Angular](https://angular.io/) - The web framework used for frontEnd
 
 ## Authors
 
