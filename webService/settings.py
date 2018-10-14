@@ -99,6 +99,7 @@ REST_FRAMEWORK = {
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
+AUTH_USER_MODEL = 'api.UserBase'
 
 DATABASES = {
     'default': {

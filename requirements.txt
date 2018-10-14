@@ -2,4 +2,8 @@ django==1.11
 djangorestframework
 django-cors-headers
 mysqlclient
+Pillow
+requests
+web3
+coreapi
 

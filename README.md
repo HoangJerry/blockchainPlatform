@@ -1,6 +1,4 @@
-# Project Title
-
-Healcare blockchain platform
+# Healcare blockchain platform
 
 ## Getting Started
 This is a project support for viewing doctor and patient's information, The platform will provide the api for login, vote and feedback about doctor background.
@@ -10,7 +8,7 @@ This is a project support for viewing doctor and patient's information, The plat
 Prestarting you should install:
 
 ```
-Python2, virtualenv, pip, node, npm
+Python3, virtualenv, pip, node, npm
 ```
 [mySQL server](https://github.com/PyMySQL/mysqlclient-python/)
 
@@ -21,8 +19,8 @@ Python2, virtualenv, pip, node, npm
 Virtualen environment 
 
 ```
-virtualenv <environment_name>
-virtualenv env
+virtualenv -p python3 <environment_name>
+virtualenv -p python3 env
 ```
 
 ```
@@ -87,9 +85,11 @@ or
 ng serve
 ```
 
-## Running the tests
+## API documentations
 
-Explain how to run the automated tests for this system
+```
+http://localhost:8000/docs/
+```
 
 ### Break down into end to end tests
 
