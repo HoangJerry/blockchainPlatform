@@ -14,7 +14,7 @@ db.sql
 /media/
 /uploads/
 /static/
-/Manager/migrations/
+/api/migrations/
 /logs/
 
 .project
