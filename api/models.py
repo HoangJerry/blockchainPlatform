@@ -5,6 +5,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class UserBase(AbstractUser):
@@ -19,3 +21,12 @@ class UserBase(AbstractUser):
     @property
     def full_name(self):
         return u'{} {}'.format(self.first_name,self.last_name)
+
+    @property
+    def token(self):
+        return self.auth_token.key
+
+@receiver(post_save, sender=UserBase)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)

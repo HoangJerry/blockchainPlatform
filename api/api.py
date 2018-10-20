@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 from .serializers import *
 from .models import *
 from rest_framework.response import Response
@@ -21,7 +22,7 @@ web3 = Web3(Web3.HTTPProvider("http://localhost:8080/"))
 class AccountsList(APIView):
     pass
 
-class AccountCreate(CreateAPIView):
+class UserCreate(generics.CreateAPIView):
     queryset = UserBase
     serializer_class = UserSignUpSerializer
 
@@ -35,23 +36,35 @@ class AccountCreate(CreateAPIView):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=HTTP_201_CREATED, headers=headers)
 
-class AccountsLogin(APIView):
+class UserLogin(APIView):
     serializer_class = UserLoginSerializer
-
+    
     def post(self, request, format=None):
         block_chain_id = request.data.get('block_chain_id',None)
         password = request.data.get('password',None)
-        print (block_chain_id, password)
-        if not (block_chain_id and password):
+        message = request.data.get('message',None)
+        print (request.user)
+        if request.user.is_authenticated():
+            user = request.user
+        elif block_chain_id and password:
+            data['method']="personal_sign"
+            data['params']=[block_chain_id,block_chain_id,password]
+            if message:
+                data['params']=['0x'+message.encode("utf-8").hex(),block_chain_id,password]
+            
+            res = requests.post(base_rpc_url,data=json.dumps(data), headers=rpc_headers)
+            # res= vars(res)
+            ret = json.loads(res._content)
+            if 'error' in ret:
+                raise api_utils.BadRequest("Invalid account or password is wrong")
+
+            user = UserBase.objects.get(username=block_chain_id)
+        else:
             raise api_utils.BadRequest("Blockchain id or password is missing")
-        data['method']="personal_sign"
-        data['params']=[block_chain_id,block_chain_id,password]
-        res = requests.post(base_rpc_url,data=json.dumps(data), headers=rpc_headers)
-        # res= vars(res)
-        ret = json.loads(res._content)
-        if 'error' in ret:
-            raise api_utils.BadRequest("Invalid account or password is wrong")
-        return Response(ret,status=HTTP_200_OK)
+        if user:
+            serializer = UserWithTokenSerializer(instance=user)
+            return Response(serializer.data,status=HTTP_200_OK)
+        raise api_utils.BadRequest("Invalid account or password is wrong")
 
 class getBalance(APIView):
     serializer_class = UserLoginSerializer

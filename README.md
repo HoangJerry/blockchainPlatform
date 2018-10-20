@@ -51,6 +51,9 @@ DATABASES = {
 	}
 }
 ```
+or
+rename webService/settings_local (copy).py -> settings_local.py
+then setting in settings_local.py
 
 Migrate
 ```

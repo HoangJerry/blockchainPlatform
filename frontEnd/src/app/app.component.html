@@ -1,1 +1,8 @@
-<router-outlet></router-outlet>
+<div *ngIf="currentUrl!='/login'" class="be-wrapper">
+    <app-navbar-top></app-navbar-top>
+    <app-siderbar-left></app-siderbar-left>
+    <div class="be-content">
+		<router-outlet></router-outlet>
+	</div>
+</div>
+<router-outlet *ngIf="currentUrl=='/login'"></router-outlet>

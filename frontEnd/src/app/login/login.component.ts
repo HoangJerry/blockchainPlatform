@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpService } from '../http.service';
+import { HttpService, AuthService } from '../http.service';
+import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
+import { Router }                   from '@angular/router'
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -8,13 +11,33 @@ import { HttpService } from '../http.service';
 export class LoginComponent implements OnInit {
   blockChainID :string;
   password :string;
-  constructor(private http: HttpService) { }
+  form: number=1;
+  constructor(private http: HttpService, 
+              private toastyService:ToastyService, 
+              private toastyConfig: ToastyConfig,
+              private router: Router,
+              private auth:AuthService) {
+     this.toastyConfig.theme = 'material';
+     if (this.auth.isLoggedIn()){
+        this.router.navigate(['/dashboard']);
+     }
+  }
 
   ngOnInit() {
   }
+
   onClickLogin = () =>{
-    this.http.listAccount().subscribe((data) => {console.log(data)});
-    this.http.signAccount(this.blockChainID,this.password).subscribe((data)=>{console.log(data)});
+    this.http.signAccount(this.blockChainID,this.password).subscribe(
+      (data:any) => {
+        console.log(data);
+        this.auth.login(data.token)
+        this.toastyService.success("Login success!");
+        this.router.navigate(['/dashboard']);
+      },
+      (error)=>{
+        this.toastyService.error(error.error.detail);
+      }
+    );
   }
 
 }
