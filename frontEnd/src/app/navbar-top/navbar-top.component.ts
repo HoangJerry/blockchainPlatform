@@ -8,12 +8,16 @@ import { Router } from '@angular/router'
 })
 export class NavbarTopComponent implements OnInit {
   currentUser :any;
+  balance: any;
   constructor(private http: HttpService, private auth: AuthService, private router: Router) { }
 
   ngOnInit() {
-    this.http.currentUser.subscribe(user => {this.currentUser = user});
+    this.http.currentUser.subscribe(user => {this.currentUser = user;});
+    this.http.getBalance().subscribe(balance=> this.balance=balance);
   }
+  ngAfterViewInit() {
 
+  }
   onClickLogout = () => {
   	this.auth.logout();
   	this.router.navigate(['/login']);

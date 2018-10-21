@@ -14,6 +14,9 @@ import { SiderbarLeftComponent } from './siderbar-left/siderbar-left.component';
 import { AuthGuard } from './http.service'
 import { AuthService } from './http.service';
 import { MyWalletComponent } from './my-wallet/my-wallet.component';
+import { HealthCareRecordComponent } from './health-care-record/health-care-record.component';
+import { DoctorRatingComponent } from './doctor-rating/doctor-rating.component';
+import { HistoryTransactionComponent } from './history-transaction/history-transaction.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +26,9 @@ import { MyWalletComponent } from './my-wallet/my-wallet.component';
     NavbarTopComponent,
     SiderbarLeftComponent,
     MyWalletComponent,
+    HealthCareRecordComponent,
+    DoctorRatingComponent,
+    HistoryTransactionComponent,
   ],
   imports: [
     BrowserModule,

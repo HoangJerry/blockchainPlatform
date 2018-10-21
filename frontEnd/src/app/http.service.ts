@@ -33,7 +33,29 @@ export class HttpService {
     }
     
   }
+
+  getBalance = () =>{
+    let headers = this.headers
+      headers = headers.set('Authorization','Token '+localStorage.getItem('token'))
+    return this.http.get('http://localhost:8000/api/user/balance/',{headers:headers});
+  }
+
+  getUserInfor = () =>{
+    let headers = this.headers
+      headers = headers.set('Authorization','Token '+localStorage.getItem('token'))
+    return this.http.get('http://localhost:8000/api/user/me/',{headers:headers});
+  }
+
+  getUserTestHistory = () =>{
+    let headers = this.headers
+      headers = headers.set('Authorization','Token '+localStorage.getItem('token'))
+    return this.http.get('http://localhost:8000/api/user/history/test/',{headers:headers});
+  }
+
   updateUser(message) {
+    let headers = this.headers
+    headers = headers.set('Authorization','Token '+localStorage.getItem('token'));
+    this.http.patch('http://localhost:8000/api/user/me/',message,{headers:headers}).subscribe(s=>{});
     this.messageSource.next(message);
   }
 
@@ -76,14 +98,13 @@ export class AuthService {
                     this.http.signAccount(null, null, localStorage.getItem('token'))
                         .subscribe(
                             (data: any) => {
-                                console.log('hehe');
+                                console.log(data);
                                 this.http.updateUser(data);
                                 this.isLoginSubject = true;
                                 observer.next(true);
                                 observer.complete();
                             },
                             (error) => {
-                                console.log('lala');
                                 this.toastyService.error(error.error.detail);
                                 this.isLoginSubject = false;
                                 this.router.navigate(['/login']);

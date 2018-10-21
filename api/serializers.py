@@ -1,5 +1,5 @@
 from rest_framework import fields, serializers
-from .models import UserBase
+from .models import *
 
 class UserSignUpSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, style={'input_type': 'password'})
@@ -28,10 +28,24 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserBase
         fields = ('id','username','email','avatar',
-            'birthday','avatar_url', 'first_name','last_name')
+            'birthday','avatar_url', 'first_name','last_name','address','phone',
+            'emergency_name','emergency_address','emergency_phone','emergency_relationship')
 
 
 class UserWithTokenSerializer(UserSerializer):
     token = serializers.CharField(read_only=True)
     class Meta(UserSerializer.Meta):
         fields = UserSerializer.Meta.fields + ('token',)
+
+class UserTestHistorySerializer(serializers.ModelSerializer):
+    name_of_test = serializers.SerializerMethodField(read_only=True)
+    status = serializers.SerializerMethodField(read_only=True)
+    class Meta:
+        model = TestHistory
+        fields = '__all__'
+
+    def get_name_of_test(self,obj):
+        return obj.get_name_of_test_display()
+    def get_status(self,obj):
+        return obj.get_status_display()
+

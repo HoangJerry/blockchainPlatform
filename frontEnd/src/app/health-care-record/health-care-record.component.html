@@ -1,0 +1,136 @@
+<div class="page-head">
+    <h3>Heathcare Recorded</h3>
+</div>
+<div class="page-head">
+    <div class="rows">
+
+        <div class="row" *ngIf="user">
+            <div class="col-md-7">
+                <h4>My Information</h4>
+                <table class="tableTable" width="100%" cellspacing="0" cellpadding="0" border="0" >
+                    <tr class="trTable" style="width: 50%;">
+                        <th class="thtdTable">First name</th>
+                        <th class="thtdTable">Last name</th>
+                        <th class="thtdTable">Address</th>
+                        <th class="thtdTable">Phone</th>
+                        <th class="thtdTable">Birthday</th>
+                    </tr>
+                    <tr class="trTable" style="width: 50%">
+                        <td class="thtdTable"><input type="text" name="frist name" [(ngModel)]="user.first_name" autocomplete="off" (blur)="onChangeUser()"></td>
+                        <td class="thtdTable"><input type="text" name="last_name" [(ngModel)]="user.last_name" autocomplete="off" (blur)="onChangeUser()"></td>
+                        <td class="thtdTable"><input type="text" name="address" [(ngModel)]="user.address" autocomplete="off" (blur)="onChangeUser()"></td>
+                        <td class="thtdTable"><input type="text" name="phone" [(ngModel)]="user.phone" autocomplete="off" (blur)="onChangeUser()"></td>
+                        <td class="thtdTable"><input type="date" name="birthday" [(ngModel)]="user.birthday" autocomplete="off" (blur)="onChangeUser()"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-5 emergency">
+                <h4>Information for Emergency</h4>
+                <table class="tableTable" width="100%" cellspacing="0" cellpadding="0">
+                    <tr class="trTable" style="width: 50%;">
+                        <th class="thtdTable">Full Name</th>
+                        <th class="thtdTable">Address</th>
+                        <th class="thtdTable">Phone</th>
+                        <th class="thtdTable">Relationship</th>
+                    </tr>
+                    <tr class="trTable" style="width: 50%">
+                        <td class="thtdTable"><input type="text" name="name" [(ngModel)]="user.emergency_name" autocomplete="off" (blur)="onChangeUser()"></td>
+                        <td class="thtdTable"><input type="text" name="address" [(ngModel)]="user.emergency_address" autocomplete="off" (blur)="onChangeUser()"></td>
+                        <td class="thtdTable"><input type="text" name="phone" [(ngModel)]="user.emergency_phone" autocomplete="off" (blur)="onChangeUser()"></td>
+                        <td class="thtdTable"><input type="text" name="relationship" [(ngModel)]="user.emergency_relationship" autocomplete="off" (blur)="onChangeUser()"></td>
+                    </tr>
+                </table>
+            </div>
+
+        </div><br><br>
+        <div class="row" *ngIf="userTestHistories">
+            <div class="col-md-12" >
+                <h3>Test History</h3>
+                <table class="table table-bordered" id="historyTestTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable6(0)">Date<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                            <th onclick="sortTable6(1)">Name of Test<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                            <th onclick="sortTable6(2)">Status<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody >
+                        <tr *ngFor="let test of userTestHistories">
+                            <td>{{test.creation_date}}</td>
+                            <td>{{test.name_of_test}}</td>
+                            <td>{{test.status}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h3>Visit History </h3>
+                <table class="table table-bordered" id="historyVisitTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable7(0)">Date<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                            <th onclick="sortTable7(1)">Visit Reason <i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                            <th onclick="sortTable7(2)">Location<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                            <th onclick="sortTable7(3)">Note<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>11/10/2017</td>
+                            <td>hypertension</td>
+                            <td>North Ave</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>13/10/2017</td>
+                            <td>hypertension</td>
+                            <td>North Ave</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>16/10/2017</td>
+                            <td>hypertension</td>
+                            <td>North Ave</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>22/10/2017</td>
+                            <td>hypertension</td>
+                            <td>South Ave</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h3>Family History </h3>
+                <table class="table table-bordered" id="historyFamilyTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable8(0)">Name<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                            <th onclick="sortTable8(1)">Relationship<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                            <th onclick="sortTable8(2)">Condition<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                            <th onclick="sortTable8(3)">Status<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Marry Cruise</td>
+                            <td>Aunt</td>
+                            <td>fibromyalgia</td>
+                            <td>active</td>
+                        </tr>
+                        <tr>
+                            <td>Henry Cruise</td>
+                            <td>Cousin (first)</td>
+                            <td>hyperlipidedia</td>
+                            <td>intermittent</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

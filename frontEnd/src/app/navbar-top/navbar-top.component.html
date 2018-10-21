@@ -1,12 +1,13 @@
 <nav class="navbar navbar-default navbar-fixed-top be-top-header">
     <div class="container-fluid">
-        <div class="navbar-header"><a href="#" class="navbar-brand"></a>
+        <div class="navbar-header"><a href="#" routerLink="/dashboard" class="navbar-brand"></a>
         </div>
         <div class="be-right-navbar">
-            <ul class="nav navbar-nav navbar-right be-user-nav">
+            <ul class="nav navbar-nav navbar-right be-user-nav" *ngIf="balance">
+                <li style="line-height: 60px"><button (click)="router.navigate(['/wallet'])" type="button" class="btn btn-warning" >{{balance.my_balance}}$</button></li>
                 <li><a href="#" (click)="onClickLogout()">Logout</a>
                 </li>
-                <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle"><img *ngIf="currentUser" src="{{currentUser.avatar_url}}" alt="Avatar"><span class="user-name">Username</span></a>
+                <li class="dropdown"><a href="#" routerLink="/health-care-record"><img *ngIf="currentUser" src="{{currentUser.avatar_url}}" alt="Avatar"></a>
                 </li>
             </ul>
             <div class="page-title"><span>Dashboard</span></div>

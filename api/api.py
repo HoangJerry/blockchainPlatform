@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import BasePermission
 from .serializers import *
 from .models import *
 from rest_framework.response import Response
@@ -19,8 +19,12 @@ from web3 import Web3
 web3 = Web3(Web3.HTTPProvider("http://localhost:8080/"))
 
 
-class AccountsList(APIView):
-    pass
+
+class IsAuthenticated(BasePermission):
+
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated 
+
 
 class UserCreate(generics.CreateAPIView):
     queryset = UserBase
@@ -68,13 +72,28 @@ class UserLogin(APIView):
 
 class getBalance(APIView):
     serializer_class = UserLoginSerializer
-
-    def post(self, request, format=None):
-        block_chain_id = request.data.get('block_chain_id',None)
-        if not block_chain_id:
+    permission_classes = [IsAuthenticated]
+    def get(self, request, format=None):
+        if not request.user.username:
             raise api_utils.BadRequest("Invalid account")
         try:
-            account = web3.eth.getBalance(block_chain_id)
+            account = web3.eth.getBalance(Web3.toChecksumAddress(request.user.username))
         except Exception as e:
             raise api_utils.BadRequest(ast.literal_eval(str(e))[0])
         return Response({'my_balance':account},status=HTTP_200_OK)
+
+class UserTestHistory(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserTestHistorySerializer
+
+    def get_queryset(self):
+        return self.request.user.test_history.all()
+
+class UserInfor(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user
+
+

@@ -6,15 +6,15 @@
                 <div class="left-sidebar-content">
                     <ul class="sidebar-elements">
                         <li class="divider">Menu</li>
-                        <li><a href="#" routerLink="/dashboard"><i class="icon mdi mdi-home"></i><span>Dashboard</span></a>
+                        <li [ngClass]="{'active':currentUrl==='/dashboard'}"><a href="#" routerLink="/dashboard"><i class="icon mdi mdi-home"></i><span>Dashboard</span></a>
                         </li>
-                        <li class="parent"><a href="#" routerLink="/wallet"><i class="icon mdi mdi-face"></i><span>My Wallet</span></a>
+                        <li [ngClass]="{'active':currentUrl=='/wallet'}"><a href="#" routerLink="/wallet"><i class="icon mdi mdi-face"></i><span>My Wallet</span></a>
                         </li>
-                        <li class="parent"><a href="#"><i class="icon mdi mdi-face"></i><span>HealthCare Recorded </span></a>
+                        <li [ngClass]="{'active':currentUrl=='/health-care-record'}"><a href="#" routerLink="/health-care-record"><i class="icon mdi mdi-face"></i><span>HealthCare Recorded </span></a>
                         </li>
-                        <li class="parent"><a href="#"><i class="icon mdi mdi-face"></i><span>Doctor Rating </span></a>
+                        <li [ngClass]="{'active':currentUrl=='/doctor-rating'}"><a href="#" routerLink="/doctor-rating"><i class="icon mdi mdi-face"></i><span>Doctor Rating </span></a>
                         </li>
-                        <li class="parent"><a href="#"><i class="icon mdi mdi-face"></i><span>History Transaction</span></a>
+                        <li [ngClass]="{'active':currentUrl=='/history-transaction'}"><a href="#" routerLink="/history-transaction"><i class="icon mdi mdi-face"></i><span>History Transaction</span></a>
                         </li>
                     </ul>
                 </div>

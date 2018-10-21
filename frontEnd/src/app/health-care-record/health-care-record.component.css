@@ -1,0 +1,15 @@
+.trTable .thtdTable input{
+	width: 120px;
+	background: none;
+	border: none;
+	border-bottom: 1px solid white;
+	transition: ease-in-out, border-bottom .35s ease-in-out;
+}
+.trTable .thtdTable input:focus{
+	outline: none;
+	border-bottom: 1px #3d3d3d solid;
+
+}
+.emergency .trTable .thtdTable input{
+	width: 110px;
+}

@@ -8,7 +8,7 @@ from .models import *
 # Register your models here.
 
 class UserBaseAdmin(UserAdmin):
-    list_display = ('id','email','first_name','last_name','birthday')
+    list_display = ('id','username','first_name','last_name','birthday')
     ordering = ('-date_joined',)
     fieldsets = (
         (None, {'fields': ('username','email', 'password')}),
@@ -23,5 +23,15 @@ class UserBaseAdmin(UserAdmin):
         )
     # inlines = (OrderInline,)
 
-
+class TestHistoryAdmin(admin.ModelAdmin):
+    list_display = ('user','name_of_test','creation_date','status')
+class VisitHistoryAdmin(admin.ModelAdmin):
+    list_display = ('user','location','creation_date','visit_reason')
+class LocationAdmin(admin.ModelAdmin):
+    list_display = ('id','name','address','phone')
+    
+        
 admin.site.register(UserBase, UserBaseAdmin)
+admin.site.register(TestHistory, TestHistoryAdmin)
+admin.site.register(VisitHistory, VisitHistoryAdmin)
+admin.site.register(Location, LocationAdmin)
