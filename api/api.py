@@ -84,16 +84,42 @@ class getBalance(APIView):
 
 class UserTestHistory(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = UserTestHistorySerializer
+    serializer_class   = UserTestHistorySerializer
 
     def get_queryset(self):
         return self.request.user.test_history.all()
 
 class UserInfor(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = UserSerializer
+    serializer_class   = UserSerializer
 
     def get_object(self):
         return self.request.user
 
 
+
+
+class DoctorRating(APIView):
+    # permission_classes = [IsAuthenticated]
+    serializer_class = DoctorRatingSerializer
+    def post(self, request, format=None):
+        doctor_name          = request.data.get('doctor_name',None)
+        doctor_address       = request.data.get('doctor_address',None)
+        doctor_phone         = request.data.get('doctor_phone',None)
+        doctor_position      = request.data.get('doctor_position',None)
+        doctor_hospital_name = request.data.get('doctor_hospital_name',None)
+        doctor_rate          = request.data.get('doctor_rate',None)
+        print (request.user)
+
+        # if request.user.is_authenticated():
+        #     user = request.user
+        # el
+        if doctor_name and doctor_address and doctor_phone and doctor_position and doctor_hospital_name and doctor_rate:
+
+            data['params']=[doctor_name,doctor_address,doctor_phone,doctor_position,doctor_hospital_name,doctor_rate]                        
+            return Response({'details': 'Your comment about this doctor is saved'})
+        else:
+            raise api_utils.BadRequest("Some information is missing")
+            
+        
+        

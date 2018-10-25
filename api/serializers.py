@@ -1,4 +1,6 @@
 from rest_framework import fields, serializers
+from rest_framework.fields import empty
+
 from .models import *
 
 class UserSignUpSerializer(serializers.ModelSerializer):
@@ -49,3 +51,16 @@ class UserTestHistorySerializer(serializers.ModelSerializer):
     def get_status(self,obj):
         return obj.get_status_display()
 
+
+class DoctorRatingSerializer(serializers.ModelSerializer):
+    doctor_name          = serializers.CharField()
+    doctor_address       = serializers.CharField()
+    doctor_phone         = serializers.IntegerField()
+    doctor_position      = serializers.CharField(   )
+    doctor_hospital_name = serializers.CharField(   )
+    doctor_rate          = serializers.IntegerField()
+    doctor_comment       = serializers.CharField(   )
+    
+    class Meta:
+        model = DoctorRating
+        fields = ('doctor_name', 'doctor_address', 'doctor_phone', 'doctor_position','doctor_hospital_name','doctor_rate','doctor_comment')

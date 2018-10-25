@@ -25,6 +25,9 @@ class UserBase(AbstractUser):
     emergency_address = models.CharField(max_length=255, unique=True, null=True, blank=True)
     emergency_phone = models.CharField(max_length=255, unique=True, null=True, blank=True)
     emergency_relationship = models.CharField(max_length=255, unique=True, null=True, blank=True)
+
+    is_doctor = models.IntegerField(unique=False, null =False)
+    
     @property
     def full_name(self):
         return u'{} {}'.format(self.first_name,self.last_name)
@@ -39,10 +42,10 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
         Token.objects.create(user=instance)
 
 class TestHistory(models.Model):
-    CONST_NAME_HIV = 0
-    CONST_NAME_HEPATITIS = 10   #Viem gan
+    CONST_NAME_HIV           = 0
+    CONST_NAME_HEPATITIS     = 10   #Viem gan
     CONST_NAME_POLIOMYELITIS = 20 #Viem tuy
-    CONST_NAME_BRAIN_FEVER = 20 #Viem nao
+    CONST_NAME_BRAIN_FEVER   = 20 #Viem nao
 
     CONST_NAME = (
         (CONST_NAME_HIV, _('HIV')),
@@ -52,28 +55,41 @@ class TestHistory(models.Model):
     )
 
     CONST_STATUS_GOOD = 10
-    CONST_STATUS_BAD =0
+    CONST_STATUS_BAD  = 0
 
     CONST_STATUS = (
         (CONST_STATUS_GOOD,_('Good')),
         (CONST_STATUS_BAD,_('Bad'))
     )
     creation_date = models.DateField(auto_now_add=True)
-    name_of_test = models.PositiveSmallIntegerField(choices=CONST_NAME)
-    status =  models.PositiveSmallIntegerField(choices=CONST_STATUS)
-    user = models.ForeignKey("UserBase",related_name="test_history")
+    name_of_test  = models.PositiveSmallIntegerField(choices=CONST_NAME)
+    status        =  models.PositiveSmallIntegerField(choices=CONST_STATUS)
+    user          = models.ForeignKey("UserBase",related_name="test_history")
 
 class VisitHistory(models.Model):
-    user = models.ForeignKey("UserBase",related_name="visit_history")
+    user          = models.ForeignKey("UserBase",related_name="visit_history")
     creation_date = models.DateField(auto_now_add=True)
-    visit_reason = models.CharField(max_length=255, unique=True, null=True, blank=True)
-    note = models.CharField(max_length=255, unique=True, null=True, blank=True)
-    location = models.ForeignKey("Location")
+    visit_reason  = models.CharField(max_length=255, unique=True, null=True, blank=True)
+    note          = models.CharField(max_length=255, unique=True, null=True, blank=True)
+    location      = models.ForeignKey("Location")
 
 class Location(models.Model):
-    name = models.CharField(max_length=255, unique=True, null=True, blank=True)
+    name    = models.CharField(max_length=255, unique=True, null=True, blank=True)
     address = models.CharField(max_length=255, unique=True, null=True, blank=True)
-    phone = models.CharField(max_length=255, unique=True, null=True, blank=True)
+    phone   = models.CharField(max_length=255, unique=True, null=True, blank=True)
 
     def __str__(self):
         return self.name
+
+class DoctorRating(models.Model):
+    patient_id           = models.CharField(max_length=255, unique=False,  blank=True)
+    patient_name         = models.CharField(max_length=255, unique=False,  blank=False)
+    doctor_id            = models.CharField(max_length=255, unique=False,  blank=False)
+    doctor_name          = models.CharField(max_length=255, unique=False,  blank=True)
+    doctor_address       = models.CharField(max_length=255, unique=False,  blank=False)
+    doctor_phone         = models.IntegerField(             unique=False,  blank=False)
+    doctor_position      = models.CharField(max_length=255, unique=False,  blank=False)
+    doctor_hospital_name = models.CharField(max_length=255, unique=False,  blank=False)
+    doctor_rate          = models.IntegerField(             unique=False,  blank=False)
+    doctor_comment       = models.CharField(max_length=255, unique=False,  blank=False)
+    date_comment         = models.CharField(max_length=255, unique=False,  blank=False)
