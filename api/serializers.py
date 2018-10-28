@@ -1,4 +1,6 @@
 from rest_framework import fields, serializers
+from rest_framework.fields import empty
+
 from .models import *
 
 class UserSignUpSerializer(serializers.ModelSerializer):

@@ -90,7 +90,7 @@ class getBalance(APIView):
 
 class UserTestHistory(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = UserTestHistorySerializer
+    serializer_class   = UserTestHistorySerializer
 
     def get_queryset(self):
         is_rating = self.request.GET.get('is_rating',None)
@@ -148,7 +148,7 @@ class UpdateTestHistory(generics.UpdateAPIView):
 
 class UserInfor(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = UserSerializer
+    serializer_class   = UserSerializer
 
     def get_object(self):
         return self.request.user
@@ -158,5 +158,5 @@ class DataNameOfTest(APIView):
 
     def get(self,request, format=None):
         return Response(TestHistory.CONST_NAME,status=HTTP_200_OK)
-
-
+        
+        

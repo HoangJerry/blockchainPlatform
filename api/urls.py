@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^user/history/test/update/(?P<pk>[0-9]+)/$', api_views.UpdateTestHistory.as_view(), name='user-create'), 
     
     url(r'^data/name-of-test/$', api_views.DataNameOfTest.as_view(), name='data-name-of-test'), 
+
 ]
