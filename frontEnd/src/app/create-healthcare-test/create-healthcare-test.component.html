@@ -1,0 +1,25 @@
+<div class="page-head">
+    <h2 class="page-head-title">Create Health Test</h2>
+    <ol class="breadcrumb page-head-nav">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Health Test</a></li>
+        <li class="active">Create</li>
+    </ol>
+</div>
+<div class="page-head">
+	<div class="">
+		<label>Patient Address </label>
+		<input type="text" name="address" [(ngModel)]="test.user" autocomplete="off">
+	</div>
+	<div class="">
+		<label>Name of test </label>
+		<select name="select" [(ngModel)] = "test.name_of_test">
+			<option  *ngFor="let name of name_of_test_show"  value="{{name[0]}}" >{{name[1]}}</option>
+		</select>
+	</div>
+	<div class="">
+		<label>Price </label>
+		<input type="number" name="price" [(ngModel)]="test.price" autocomplete="off">
+	</div>
+	<button type="button" class="btn btn-warning" (click)="onClickCreate()">Create</button>
+</div>

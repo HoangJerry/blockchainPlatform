@@ -1,3 +1,83 @@
-<p>
-  doctor-rating works!
-</p>
+<div class="page-head">
+    <h2 class="page-head-title">Doctor rating</h2>
+    <ol class="breadcrumb page-head-nav">
+        <li><a href="#">Home</a></li>
+        <li class="active">Doctor rating</li>
+    </ol>
+</div>
+<div *ngIf="current_rating" class="page-head"  style="height:380px; vertical-align: middle;  text-align: center; overflow: hidden;">
+	<div  style="position: absolute; left: 0; right:0; pointer-events: none; "><img src="assets/img/rating-background.png" width="600px" alt=""></div>
+	<div class="row" style="margin: 0 auto; margin-top:115px">
+		<div style="width:130px; height: 50px; margin: 0 auto;">
+    	<app-rating style="margin: 0 auto; overflow: hidden; " [selectedData]="current_rating"  (changeSelected)="onChangeStar($event)"></app-rating>
+    	</div>
+	</div>
+    <div class="row">
+	   	<div class="col-md-12">
+			<label>Name of Test: </label>{{current_rating.name_of_test}}
+	    </div>
+	    <div class="col-md-12" *ngIf="current_rating.doctor">
+			<label>Doctor: </label>{{current_rating.doctor.full_name}}	
+	    </div>
+	    <div class="col-md-12">
+			<label>Date testing: </label>{{current_rating.creation_date}}
+	    </div>
+    </div>
+   
+</div>
+
+<div class="page-head">
+	 <div class="rows">
+        <div class="row">
+            <div class="col-md-12" >
+                <h3>Next rating</h3>
+                <table class="table table-bordered" id="historyTestTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable6(0)">Date<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                            <th onclick="sortTable6(1)">Name of Test<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                            <th onclick="sortTable6(2)">Patient<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                            <th onclick="sortTable6(2)">Status<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody >
+                        <tr *ngFor="let test of next_rating">
+                            <td>{{test.creation_date}}</td>
+                            <td>{{test.name_of_test}}</td>
+                            <td>{{test.user.full_name}}</td>
+                            <td>{{test.status}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12" >
+                <h3>Previous rate</h3>
+                <table class="table table-bordered" id="historyTestTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable6(0)">Date<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                            <th onclick="sortTable6(1)">Name of Test<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                            <th onclick="sortTable6(2)">Patient<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                            <th onclick="sortTable6(2)">Star<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                            <th onclick="sortTable6(2)">Status<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody >
+                        <tr *ngFor="let test of previous_rating">
+                            <td>{{test.creation_date}}</td>
+                            <td>{{test.name_of_test}}</td>
+                            <td>{{test.user.full_name}}</td>
+                            <td>
+                            	<app-rating [selectedData]="test"  (changeSelected)="onChangeStar($event)"></app-rating></td>
+                            <td>{{test.status}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -46,10 +46,29 @@ export class HttpService {
     return this.http.get('http://localhost:8000/api/user/me/',{headers:headers});
   }
 
-  getUserTestHistory = () =>{
+  getUserTestHistory = (condition?) =>{
+    if (condition==undefined){
+      condition='';
+    }
     let headers = this.headers
       headers = headers.set('Authorization','Token '+localStorage.getItem('token'))
-    return this.http.get('http://localhost:8000/api/user/history/test/',{headers:headers});
+    return this.http.get('http://localhost:8000/api/user/history/test/'+condition,{headers:headers});
+  }
+  updateUserTestHistory = (data) =>{
+    let headers = this.headers
+    headers = headers.set('Authorization','Token '+localStorage.getItem('token'));
+    return this.http.patch('http://localhost:8000/api/user/history/test/update/'+data.id+'/',data,{headers:headers});
+
+  }
+  getDoctorTestHistory = () =>{
+    let headers = this.headers
+      headers = headers.set('Authorization','Token '+localStorage.getItem('token'))
+    return this.http.get('http://localhost:8000/api/doctor/history/test/',{headers:headers});
+  }
+  createTestHistory = (data) =>{
+    let headers = this.headers
+      headers = headers.set('Authorization','Token '+localStorage.getItem('token'))
+    return this.http.post('http://localhost:8000/api/user/history/test/create/',JSON.stringify(data),{headers:headers});
   }
 
   updateUser(message) {
@@ -59,6 +78,11 @@ export class HttpService {
     this.messageSource.next(message);
   }
 
+  getNameOfTest(){
+    let headers = this.headers
+    headers = headers.set('Authorization','Token '+localStorage.getItem('token'));
+    return this.http.get('http://localhost:8000/api/data/name-of-test/',{headers:headers});
+  }
 
 }
 
@@ -98,11 +122,44 @@ export class AuthService {
                     this.http.signAccount(null, null, localStorage.getItem('token'))
                         .subscribe(
                             (data: any) => {
-                                console.log(data);
                                 this.http.updateUser(data);
                                 this.isLoginSubject = true;
                                 observer.next(true);
                                 observer.complete();
+                            },
+                            (error) => {
+                                this.toastyService.error(error.error.detail);
+                                this.isLoginSubject = false;
+                                this.router.navigate(['/login']);
+                                observer.next(false);
+                                observer.complete();
+                            })
+                }
+            })
+      } 
+    isDoctor(): Observable < boolean > {
+        return new Observable(observer => {
+                if (!localStorage.getItem('token')) {
+                    this.isLoginSubject = false;
+                    this.router.navigate(['/login']);
+                    observer.next(false);
+                    observer.complete();
+                } else {
+                    this.http.signAccount(null, null, localStorage.getItem('token'))
+                        .subscribe(
+                            (data: any) => {
+                                // console.log(data.role==10);
+                                if (data.role==0){
+                                  this.http.updateUser(data);
+                                  this.isLoginSubject = true;
+                                  observer.next(true);
+                                  observer.complete(); 
+                                }                              
+                                if (data.role==10) {
+                                  this.router.navigate(['/dashboard']);
+                                  observer.next(false);
+                                  observer.complete();
+                                }                                
                             },
                             (error) => {
                                 this.toastyService.error(error.error.detail);
@@ -124,5 +181,15 @@ export class AuthGuard implements CanActivate {
         return this._auth.hasToken();
         
         
+    }
+}
+
+@Injectable()
+export class DoctorGuard implements CanActivate {
+    constructor(private router: Router, private _auth:AuthService) { }
+
+    canActivate(next:ActivatedRouteSnapshot, state:RouterStateSnapshot){
+        // not logged in so redirect to login page with the return url
+        return this._auth.isDoctor();
     }
 }

@@ -1,0 +1,16 @@
+label{
+	font-size: 13px;
+	font-weight: 700;
+	width: 120px;
+}
+input,select{
+	width: 120px;
+	background: none;
+	border: none;
+	border-bottom: 1px solid white;
+	transition: ease-in-out, border-bottom .35s ease-in-out;
+}
+input:focus,select:focus{
+	outline: none;
+	border-bottom: 1px #3d3d3d solid;
+}

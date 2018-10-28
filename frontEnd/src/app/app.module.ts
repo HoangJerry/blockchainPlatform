@@ -10,8 +10,10 @@ import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { NavbarTopComponent } from './navbar-top/navbar-top.component';
 import { SiderbarLeftComponent } from './siderbar-left/siderbar-left.component';
+import { CreateHealthcareTestComponent } from './create-healthcare-test/create-healthcare-test.component';
+import { RatingComponent } from './rating/rating.component';
 
-import { AuthGuard } from './http.service'
+import { AuthGuard, DoctorGuard } from './http.service'
 import { AuthService } from './http.service';
 import { MyWalletComponent } from './my-wallet/my-wallet.component';
 import { HealthCareRecordComponent } from './health-care-record/health-care-record.component';
@@ -29,6 +31,8 @@ import { HistoryTransactionComponent } from './history-transaction/history-trans
     HealthCareRecordComponent,
     DoctorRatingComponent,
     HistoryTransactionComponent,
+    CreateHealthcareTestComponent,
+    RatingComponent,
   ],
   imports: [
     BrowserModule,
@@ -37,7 +41,7 @@ import { HistoryTransactionComponent } from './history-transaction/history-trans
     FormsModule,
     ToastyModule.forRoot(),
   ],
-  providers: [AuthGuard,AuthService,],
+  providers: [AuthGuard,AuthService,DoctorGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

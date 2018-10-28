@@ -6,8 +6,9 @@ import { MyWalletComponent } from './my-wallet/my-wallet.component';
 import { HealthCareRecordComponent } from './health-care-record/health-care-record.component';
 import { DoctorRatingComponent } from './doctor-rating/doctor-rating.component';
 import { HistoryTransactionComponent } from './history-transaction/history-transaction.component';
+import { CreateHealthcareTestComponent } from './create-healthcare-test/create-healthcare-test.component';
 
-import { AuthGuard } from './http.service';
+import { AuthGuard, DoctorGuard } from './http.service';
 const routes: Routes = [
 
   	{
@@ -29,6 +30,11 @@ const routes: Routes = [
 		path :'health-care-record',
 		component: HealthCareRecordComponent,
 		canActivate:[AuthGuard],
+	},
+	{
+		path :'create-health-care-record',
+		component: CreateHealthcareTestComponent,
+		canActivate:[DoctorGuard],
 	},
 	{
 		path :'doctor-rating',

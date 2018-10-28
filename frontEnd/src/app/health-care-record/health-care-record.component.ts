@@ -6,11 +6,17 @@ import { HttpService } from '../http.service'
   styleUrls: ['./health-care-record.component.css']
 })
 export class HealthCareRecordComponent implements OnInit {
-  user:any;
+  user:any = new Object;
   userTestHistories:any;
+  doctorTestHistories:any;
   constructor(private http:HttpService) {
   	this.http.getUserInfor().subscribe((data)=>{
-  		this.user = data
+  		this.user = data;
+      if (this.user.role==0){
+        this.http.getDoctorTestHistory().subscribe((d:any)=>{
+          this.doctorTestHistories=d.results;
+        })
+      }
   	})
 
   	this.http.getUserTestHistory().subscribe((data:any)=>{

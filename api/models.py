@@ -5,12 +5,20 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-
+import pprint
 from rest_framework.authtoken.models import Token
 
 class UserBase(AbstractUser):
+    CONST_ROLE_PATIENT = 10
+    CONST_ROLE_DOCTOR =0
+
+    CONST_ROLE = (
+        (CONST_ROLE_PATIENT,_('Patient')),
+        (CONST_ROLE_DOCTOR,_('Doctor'))
+    ) 
+    role = models.PositiveSmallIntegerField(choices=CONST_ROLE, default=CONST_ROLE_PATIENT)
     email = models.EmailField(_('email address'), null=True, blank=True)
     birthday = models.DateField(null=True, blank=False)
     avatar = models.ImageField(help_text=_('Picture shall be squared, max 640*640, 500k'), upload_to='avatars',
@@ -42,7 +50,7 @@ class TestHistory(models.Model):
     CONST_NAME_HIV = 0
     CONST_NAME_HEPATITIS = 10   #Viem gan
     CONST_NAME_POLIOMYELITIS = 20 #Viem tuy
-    CONST_NAME_BRAIN_FEVER = 20 #Viem nao
+    CONST_NAME_BRAIN_FEVER = 30 #Viem nao
 
     CONST_NAME = (
         (CONST_NAME_HIV, _('HIV')),
@@ -51,17 +59,37 @@ class TestHistory(models.Model):
         (CONST_NAME_BRAIN_FEVER, _('Brain fever')),
     )
 
-    CONST_STATUS_GOOD = 10
-    CONST_STATUS_BAD =0
+    CONST_STATUS_TESTING = 10 # Test
+    CONST_STATUS_PENDING =20 # Co ket qua cho tra tien
+    CONST_STATUS_RATING =30 # Cho rating
+    CONST_STATUS_CLOSE =40 
+    CONST_STATUS_GOOD =10
+    CONST_STATUS_BAD = 0
 
     CONST_STATUS = (
+        (CONST_STATUS_TESTING,_('Testing')),
+        (CONST_STATUS_PENDING,_('Pending')),
+        (CONST_STATUS_RATING,_('Rating')),
+        (CONST_STATUS_CLOSE,_('Close')),
+    )
+    CONST_RESULT =(
         (CONST_STATUS_GOOD,_('Good')),
         (CONST_STATUS_BAD,_('Bad'))
     )
-    creation_date = models.DateField(auto_now_add=True)
+    creation_date = models.DateTimeField(auto_now_add=True)
     name_of_test = models.PositiveSmallIntegerField(choices=CONST_NAME)
-    status =  models.PositiveSmallIntegerField(choices=CONST_STATUS)
-    user = models.ForeignKey("UserBase",related_name="test_history")
+    status =  models.PositiveSmallIntegerField(choices=CONST_STATUS, default=CONST_STATUS_TESTING)
+    result =  models.PositiveSmallIntegerField(choices=CONST_RESULT,null=True, blank=True)
+    user = models.ForeignKey("UserBase",related_name="patient_test_history")
+    doctor = models.ForeignKey("UserBase",related_name="doctor_test_history",null=True, blank=True)
+    price = models.IntegerField(default=0)
+    doctor_star = models.PositiveSmallIntegerField(null=True, blank=True)
+
+@receiver(pre_save, sender=TestHistory)
+def update_status(sender, instance=None, created=False, **kwargs):
+    pprint.pprint(vars(instance))
+    if not instance.doctor_star==None:
+        instance.status=TestHistory.CONST_STATUS_CLOSE
 
 class VisitHistory(models.Model):
     user = models.ForeignKey("UserBase",related_name="visit_history")

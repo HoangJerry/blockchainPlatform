@@ -27,7 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserBase
-        fields = ('id','username','email','avatar',
+        fields = ('id','username','email','avatar','role','full_name',
             'birthday','avatar_url', 'first_name','last_name','address','phone',
             'emergency_name','emergency_address','emergency_phone','emergency_relationship')
 
@@ -38,6 +38,8 @@ class UserWithTokenSerializer(UserSerializer):
         fields = UserSerializer.Meta.fields + ('token',)
 
 class UserTestHistorySerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    doctor = UserSerializer(read_only=True)
     name_of_test = serializers.SerializerMethodField(read_only=True)
     status = serializers.SerializerMethodField(read_only=True)
     class Meta:
@@ -49,3 +51,20 @@ class UserTestHistorySerializer(serializers.ModelSerializer):
     def get_status(self,obj):
         return obj.get_status_display()
 
+class CreateTestHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TestHistory
+        fields = ('name_of_test','price')
+        extra_kwargs = {'price': {'required': True,'allow_null':False}}
+
+class UserRatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TestHistory
+        fields = ('doctor_star',)
+        extra_kwargs = {'doctor_star': {'required': True,'allow_null':False}}
+
+class DoctorUpdateResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TestHistory
+        fields = ('result')
+        extra_kwargs = {'doctor_star': {'required': True,'allow_null':False}}

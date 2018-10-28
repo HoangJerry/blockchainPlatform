@@ -1,7 +1,11 @@
 <div class="page-head">
     <h3>Heathcare Recorded</h3>
+    <ol class="breadcrumb page-head-nav">
+        <li><a href="#">Home</a></li>
+        <li class="active">Health Test</li>
+    </ol>
 </div>
-<div class="page-head">
+<div *ngIf="user.role==10" class="page-head">
     <div class="rows">
 
         <div class="row" *ngIf="user">
@@ -132,5 +136,72 @@
                 </table>
             </div>
         </div>
+    </div>
+</div>
+<div *ngIf="user.role==0" class="page-head">
+    <div class="rows">
+        <button type="button" class="btn btn-warning" routerLink="/create-health-care-record">Create</button>
+
+        <div class="row" *ngIf="user">
+            <div class="col-md-7">
+                <h4>My Information</h4>
+                <table class="tableTable" width="100%" cellspacing="0" cellpadding="0" border="0" >
+                    <tr class="trTable" style="width: 50%;">
+                        <th class="thtdTable">First name</th>
+                        <th class="thtdTable">Last name</th>
+                        <th class="thtdTable">Address</th>
+                        <th class="thtdTable">Phone</th>
+                        <th class="thtdTable">Birthday</th>
+                    </tr>
+                    <tr class="trTable" style="width: 50%">
+                        <td class="thtdTable"><input type="text" name="frist name" [(ngModel)]="user.first_name" autocomplete="off" (blur)="onChangeUser()"></td>
+                        <td class="thtdTable"><input type="text" name="last_name" [(ngModel)]="user.last_name" autocomplete="off" (blur)="onChangeUser()"></td>
+                        <td class="thtdTable"><input type="text" name="address" [(ngModel)]="user.address" autocomplete="off" (blur)="onChangeUser()"></td>
+                        <td class="thtdTable"><input type="text" name="phone" [(ngModel)]="user.phone" autocomplete="off" (blur)="onChangeUser()"></td>
+                        <td class="thtdTable"><input type="date" name="birthday" [(ngModel)]="user.birthday" autocomplete="off" (blur)="onChangeUser()"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-5 emergency">
+                <h4>Information for Emergency</h4>
+                <table class="tableTable" width="100%" cellspacing="0" cellpadding="0">
+                    <tr class="trTable" style="width: 50%;">
+                        <th class="thtdTable">Full Name</th>
+                        <th class="thtdTable">Address</th>
+                        <th class="thtdTable">Phone</th>
+                        <th class="thtdTable">Relationship</th>
+                    </tr>
+                    <tr class="trTable" style="width: 50%">
+                        <td class="thtdTable"><input type="text" name="name" [(ngModel)]="user.emergency_name" autocomplete="off" (blur)="onChangeUser()"></td>
+                        <td class="thtdTable"><input type="text" name="address" [(ngModel)]="user.emergency_address" autocomplete="off" (blur)="onChangeUser()"></td>
+                        <td class="thtdTable"><input type="text" name="phone" [(ngModel)]="user.emergency_phone" autocomplete="off" (blur)="onChangeUser()"></td>
+                        <td class="thtdTable"><input type="text" name="relationship" [(ngModel)]="user.emergency_relationship" autocomplete="off" (blur)="onChangeUser()"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="row" *ngIf="doctorTestHistories">
+            <div class="col-md-12" >
+                <h3>Test History</h3>
+                <table class="table table-bordered" id="historyTestTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable6(0)">Date<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                            <th onclick="sortTable6(1)">Name of Test<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                            <th onclick="sortTable6(2)">Patient<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                            <th onclick="sortTable6(2)">Status<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody >
+                        <tr *ngFor="let test of doctorTestHistories">
+                            <td>{{test.creation_date}}</td>
+                            <td>{{test.name_of_test}}</td>
+                            <td>{{test.user.full_name}}</td>
+                            <td>{{test.status}}</td>
+                        </tr>
+                    </tbody>
+                </table>
     </div>
 </div>
