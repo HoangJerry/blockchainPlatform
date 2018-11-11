@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^doctor/history/test/$', api_views.DoctorTestHistory.as_view(), name='user-create'), 
     url(r'^user/history/test/create/$', api_views.CreateTestHistory.as_view(), name='user-create'), 
     url(r'^user/history/test/update/(?P<pk>[0-9]+)/$', api_views.UpdateTestHistory.as_view(), name='user-create'), 
+    url(r'^user/deposit/$', api_views.UserDeposit.as_view(), name='user-deposit'), 
     
     url(r'^data/name-of-test/$', api_views.DataNameOfTest.as_view(), name='data-name-of-test'), 
 

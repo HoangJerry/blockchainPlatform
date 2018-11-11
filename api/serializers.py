@@ -2,6 +2,8 @@ from rest_framework import fields, serializers
 from rest_framework.fields import empty
 
 from .models import *
+from web3 import Web3
+web3 = Web3(Web3.HTTPProvider("http://localhost:8080/"))
 
 class UserSignUpSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, style={'input_type': 'password'})
@@ -54,9 +56,10 @@ class UserTestHistorySerializer(serializers.ModelSerializer):
         return obj.get_status_display()
 
 class CreateTestHistorySerializer(serializers.ModelSerializer):
+    user = serializers.CharField(write_only=True)
     class Meta:
         model = TestHistory
-        fields = ('name_of_test','price')
+        fields = ('id','name_of_test','price','user')
         extra_kwargs = {'price': {'required': True,'allow_null':False}}
 
 class UserRatingSerializer(serializers.ModelSerializer):

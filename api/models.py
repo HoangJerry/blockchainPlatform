@@ -33,8 +33,6 @@ class UserBase(AbstractUser):
     emergency_address = models.CharField(max_length=255, unique=True, null=True, blank=True)
     emergency_phone = models.CharField(max_length=255, unique=True, null=True, blank=True)
     emergency_relationship = models.CharField(max_length=255, unique=True, null=True, blank=True)
-
-    is_doctor = models.IntegerField(unique=False, null =False)
     
     @property
     def full_name(self):
@@ -87,10 +85,11 @@ class TestHistory(models.Model):
     doctor = models.ForeignKey("UserBase",related_name="doctor_test_history",null=True, blank=True)
     price = models.IntegerField(default=0)
     doctor_star = models.PositiveSmallIntegerField(null=True, blank=True)
+    address = models.CharField(max_length=255, null=True, blank=True)
+    abi = models.CharField(max_length=2000, null=True, blank=True)
 
 @receiver(pre_save, sender=TestHistory)
 def update_status(sender, instance=None, created=False, **kwargs):
-    pprint.pprint(vars(instance))
     if not instance.doctor_star==None:
         instance.status=TestHistory.CONST_STATUS_CLOSE
 
@@ -109,15 +108,3 @@ class Location(models.Model):
     def __str__(self):
         return self.name
 
-class DoctorRating(models.Model):
-    patient_id           = models.CharField(max_length=255, unique=False,  blank=True)
-    patient_name         = models.CharField(max_length=255, unique=False,  blank=False)
-    doctor_id            = models.CharField(max_length=255, unique=False,  blank=False)
-    doctor_name          = models.CharField(max_length=255, unique=False,  blank=True)
-    doctor_address       = models.CharField(max_length=255, unique=False,  blank=False)
-    doctor_phone         = models.IntegerField(             unique=False,  blank=False)
-    doctor_position      = models.CharField(max_length=255, unique=False,  blank=False)
-    doctor_hospital_name = models.CharField(max_length=255, unique=False,  blank=False)
-    doctor_rate          = models.IntegerField(             unique=False,  blank=False)
-    doctor_comment       = models.CharField(max_length=255, unique=False,  blank=False)
-    date_comment         = models.CharField(max_length=255, unique=False,  blank=False)

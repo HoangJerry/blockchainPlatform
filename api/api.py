@@ -10,6 +10,7 @@ import requests
 import pprint
 import json
 import ast
+from solc import compile_source
 
 base_rpc_url = 'http://localhost:8080/'
 rpc_headers = {'Content-Type': 'application/json'}
@@ -28,7 +29,7 @@ class IsAuthenticated(BasePermission):
 class IsDoctor(BasePermission):
     message = 'You are not a doctor'
     def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated and request.user.role==UserBase.CONST_ROLE_DOCTOR
+        return request.user and request.user.is_authenticated and (request.user.role==UserBase.CONST_ROLE_DOCTOR or request.user.is_superuser==True)
 
 
 class UserCreate(generics.CreateAPIView):
@@ -113,18 +114,33 @@ class CreateTestHistory(generics.CreateAPIView):
     serializer_class = CreateTestHistorySerializer
 
     def create(self, request, *args, **kwargs):
-        address = request.data.get('user',None)
-        user = UserBase.objects.filter(username=address)
-        if not user:
-            raise api_utils.BadRequest("Invalid patient address")
-      
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        user = UserBase.objects.filter(username=serializer.validated_data['user'])
+        if not user:
+            raise api_utils.BadRequest("Invalid patient address")
         if not int(request.data.get('price')) > 0:
             raise api_utils.BadRequest("Invalid price is zero")
         serializer.validated_data['user']= user[0]
         serializer.validated_data['doctor']= request.user
+        web3.eth.defaultAccount = request.user.username
+        print(request.data.get('password'))
+        web3.personal.unlockAccount(request.user.username,request.data.get('password'))
+
+        # Create then input address and abi
         self.perform_create(serializer)
+        contract = web3.eth.contract(
+            address= '0x7dF41bc443c1aBEb32340435127b6DA82cF4a5b3',
+            abi='''[ { "constant": true, "inputs": [ { "name": "", "type": "uint256" } ], "name": "testHistoriesAccts", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x04f7f327" }, { "constant": true, "inputs": [], "name": "getBalance", "outputs": [ { "name": "", "type": "uint256", "value": "0" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x12065fe0" }, { "constant": true, "inputs": [ { "name": "", "type": "address" } ], "name": "balances", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x27e235e3" }, { "constant": false, "inputs": [ { "name": "_id", "type": "uint256" }, { "name": "_result", "type": "string" } ], "name": "setResult", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0x31027970" }, { "constant": false, "inputs": [], "name": "withdraw", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function", "signature": "0x3ccfd60b" }, { "constant": false, "inputs": [ { "name": "_id", "type": "uint256" }, { "name": "_patient", "type": "address" }, { "name": "_price", "type": "uint256" } ], "name": "setTestHistory", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0x62a5814e" }, { "constant": true, "inputs": [ { "name": "_id", "type": "uint256" } ], "name": "getTestHistory", "outputs": [ { "name": "", "type": "address" }, { "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0xad601c88" }, { "constant": false, "inputs": [], "name": "deposit", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0xd0e30db0" } ]''',
+        )
+
+        tx_hash = contract.functions.setTestHistory(serializer.data['id'],user[0].username,serializer.data['price']).transact()
+        # print(tx_hash)
+        web3.eth.waitForTransactionReceipt(tx_hash)
+        temp =contract.functions.getTestHistory(serializer.data['id']).call()
+        print(temp)
+        # pprint.pprint()
+        web3.personal.lockAccount(request.user.username)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=HTTP_201_CREATED, headers=headers)
 class UpdateTestHistory(generics.UpdateAPIView):
@@ -144,7 +160,48 @@ class UpdateTestHistory(generics.UpdateAPIView):
         if self.request.user.role==UserBase.CONST_ROLE_DOCTOR:
             if self.request.user != self.get_object().doctor:
                 raise api_utils.BadRequest("You are not doctor of this test")
+        
         return self.partial_update(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        contract = web3.eth.contract(
+            address= '0x7dF41bc443c1aBEb32340435127b6DA82cF4a5b3',
+            abi='''[ { "constant": true, "inputs": [ { "name": "", "type": "uint256" } ], "name": "testHistoriesAccts", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x04f7f327" }, { "constant": true, "inputs": [], "name": "getBalance", "outputs": [ { "name": "", "type": "uint256", "value": "0" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x12065fe0" }, { "constant": true, "inputs": [ { "name": "", "type": "address" } ], "name": "balances", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x27e235e3" }, { "constant": false, "inputs": [ { "name": "_id", "type": "uint256" }, { "name": "_result", "type": "string" } ], "name": "setResult", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0x31027970" }, { "constant": false, "inputs": [], "name": "withdraw", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function", "signature": "0x3ccfd60b" }, { "constant": false, "inputs": [ { "name": "_id", "type": "uint256" }, { "name": "_patient", "type": "address" }, { "name": "_price", "type": "uint256" } ], "name": "setTestHistory", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0x62a5814e" }, { "constant": true, "inputs": [ { "name": "_id", "type": "uint256" } ], "name": "getTestHistory", "outputs": [ { "name": "", "type": "address" }, { "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0xad601c88" }, { "constant": false, "inputs": [], "name": "deposit", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0xd0e30db0" } ]''',
+        )
+        if not instance.result==None:
+            try:
+                tx_hash = contract.function.setResult(instance.id, instance.result).transact()
+                web3.eth.waitForTransactionReceipt(tx_hash)
+            except Exception as e:
+                raise e
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+        return Response(serializer.data)
+class UserDeposit(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        web3.eth.defaultAccount = request.user.username
+        web3.personal.unlockAccount(request.user.username,request.data.get('password'))
+        contract = web3.eth.contract(
+            address= '0x7dF41bc443c1aBEb32340435127b6DA82cF4a5b3',
+            abi='''[ { "constant": true, "inputs": [ { "name": "", "type": "uint256" } ], "name": "testHistoriesAccts", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x04f7f327" }, { "constant": true, "inputs": [], "name": "getBalance", "outputs": [ { "name": "", "type": "uint256", "value": "0" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x12065fe0" }, { "constant": true, "inputs": [ { "name": "", "type": "address" } ], "name": "balances", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x27e235e3" }, { "constant": false, "inputs": [ { "name": "_id", "type": "uint256" }, { "name": "_result", "type": "string" } ], "name": "setResult", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0x31027970" }, { "constant": false, "inputs": [], "name": "withdraw", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function", "signature": "0x3ccfd60b" }, { "constant": false, "inputs": [ { "name": "_id", "type": "uint256" }, { "name": "_patient", "type": "address" }, { "name": "_price", "type": "uint256" } ], "name": "setTestHistory", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0x62a5814e" }, { "constant": true, "inputs": [ { "name": "_id", "type": "uint256" } ], "name": "getTestHistory", "outputs": [ { "name": "", "type": "address" }, { "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0xad601c88" }, { "constant": false, "inputs": [], "name": "deposit", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0xd0e30db0" } ]''',
+        )
+        print( "coca")
+        tx_hash = contract.functions.deposit().transact()
+        print( "coca")
+        web3.eth.waitForTransactionReceipt(tx_hash)
+        web3.personal.lockAccount(request.user.username)
+        return Response({'status':'done'},status=HTTP_200_OK)
 
 class UserInfor(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
