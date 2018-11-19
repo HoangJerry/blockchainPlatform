@@ -9,7 +9,7 @@
 	<div  style="position: absolute; left: 0; right:0; pointer-events: none; "><img src="assets/img/rating-background.png" width="600px" alt=""></div>
 	<div class="row" style="margin: 0 auto; margin-top:115px">
 		<div style="width:130px; height: 50px; margin: 0 auto;">
-    	<app-rating style="margin: 0 auto; overflow: hidden; " [selectedData]="current_rating"  (changeSelected)="onChangeStar($event)"></app-rating>
+    	<app-rating style="margin: 0 auto; overflow: hidden; " [selectedData]="current_rating"  (changeSelected)="myModal.open();onChangeStar($event);"></app-rating>
     	</div>
 	</div>
     <div class="row">
@@ -71,8 +71,7 @@
                             <td>{{test.creation_date}}</td>
                             <td>{{test.name_of_test}}</td>
                             <td>{{test.user.full_name}}</td>
-                            <td>
-                            	<app-rating [selectedData]="test"  (changeSelected)="onChangeStar($event)"></app-rating></td>
+                            <td>{{test.doctor_star}}</td>
                             <td>{{test.status}}</td>
                         </tr>
                     </tbody>
@@ -81,3 +80,19 @@
         </div>
     </div>
 </div>
+
+<modal #myModal>
+        <modal-header>
+            <h4>Verify by your password</h4>
+        </modal-header>
+        <modal-content>
+            <div class="form-group" *ngIf="current_rating!=undefined">
+                <input class="password-input form-control" type="password" name="password" [(ngModel)]="current_rating.password" autocomplete="off" placeholder="Password">
+            </div>
+        </modal-content>
+        <modal-footer>
+            <button class="btn btn-primary" (click)="onUpdateStar();myModal.close()">submit</button>
+            <button class="btn btn-danger" (click)="myModal.close()">cancel</button>
+        </modal-footer>
+</modal>
+

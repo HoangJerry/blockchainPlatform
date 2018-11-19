@@ -18,7 +18,9 @@ data = {"method": "personal_sign", "params":'',"id": 1}
 gas = 1000000000000000000
 from web3 import Web3
 web3 = Web3(Web3.HTTPProvider("http://localhost:8080/"))
-
+contract = web3.eth.contract(
+            address= "0xd9215202688707f6db47E282e9904bAF448A5F5C",
+            abi='''[ { "constant": true, "inputs": [ { "name": "", "type": "uint256" } ], "name": "testHistoriesAccts", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x04f7f327" }, { "constant": true, "inputs": [], "name": "getBalance", "outputs": [ { "name": "", "type": "uint256", "value": "0" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x12065fe0" }, { "constant": true, "inputs": [ { "name": "", "type": "address" } ], "name": "balances", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x27e235e3" }, { "constant": false, "inputs": [ { "name": "_money", "type": "uint256" } ], "name": "withdraw", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function", "signature": "0x2e1a7d4d" }, { "constant": false, "inputs": [ { "name": "_id", "type": "uint256" }, { "name": "_result", "type": "string" } ], "name": "setResult", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0x31027970" }, { "constant": false, "inputs": [ { "name": "_id", "type": "uint256" }, { "name": "_patient", "type": "address" }, { "name": "_price", "type": "uint256" } ], "name": "setTestHistory", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0x62a5814e" }, { "constant": false, "inputs": [ { "name": "_id", "type": "uint256" }, { "name": "_start", "type": "uint256" } ], "name": "rating", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0x6df9986a" }, { "constant": true, "inputs": [ { "name": "_id", "type": "uint256" } ], "name": "getTestHistory", "outputs": [ { "name": "", "type": "address" }, { "name": "", "type": "string" }, { "name": "", "type": "uint256" }, { "name": "", "type": "bool" }, { "name": "", "type": "bool" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0xad601c88" }, { "constant": false, "inputs": [], "name": "deposit", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0xd0e30db0" } ]''')
 
 
 class IsAuthenticated(BasePermission):
@@ -107,7 +109,7 @@ class DoctorTestHistory(generics.ListAPIView):
     serializer_class = UserTestHistorySerializer
 
     def get_queryset(self):
-        return self.request.user.doctor_test_history.all()
+        return self.request.user.doctor_test_history.all().order_by('-creation_date')
 
 class CreateTestHistory(generics.CreateAPIView):
     permission_classes = [IsDoctor]
@@ -123,35 +125,56 @@ class CreateTestHistory(generics.CreateAPIView):
             raise api_utils.BadRequest("Invalid price is zero")
         serializer.validated_data['user']= user[0]
         serializer.validated_data['doctor']= request.user
-        web3.eth.defaultAccount = request.user.username
-        print(request.data.get('password'))
-        web3.personal.unlockAccount(request.user.username,request.data.get('password'))
-
-        # Create then input address and abi
         self.perform_create(serializer)
-        contract = web3.eth.contract(
-            address= '0x7dF41bc443c1aBEb32340435127b6DA82cF4a5b3',
-            abi='''[ { "constant": true, "inputs": [ { "name": "", "type": "uint256" } ], "name": "testHistoriesAccts", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x04f7f327" }, { "constant": true, "inputs": [], "name": "getBalance", "outputs": [ { "name": "", "type": "uint256", "value": "0" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x12065fe0" }, { "constant": true, "inputs": [ { "name": "", "type": "address" } ], "name": "balances", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x27e235e3" }, { "constant": false, "inputs": [ { "name": "_id", "type": "uint256" }, { "name": "_result", "type": "string" } ], "name": "setResult", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0x31027970" }, { "constant": false, "inputs": [], "name": "withdraw", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function", "signature": "0x3ccfd60b" }, { "constant": false, "inputs": [ { "name": "_id", "type": "uint256" }, { "name": "_patient", "type": "address" }, { "name": "_price", "type": "uint256" } ], "name": "setTestHistory", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0x62a5814e" }, { "constant": true, "inputs": [ { "name": "_id", "type": "uint256" } ], "name": "getTestHistory", "outputs": [ { "name": "", "type": "address" }, { "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0xad601c88" }, { "constant": false, "inputs": [], "name": "deposit", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0xd0e30db0" } ]''',
-        )
-
-        tx_hash = contract.functions.setTestHistory(serializer.data['id'],user[0].username,serializer.data['price']).transact()
-        # print(tx_hash)
-        web3.eth.waitForTransactionReceipt(tx_hash)
-        temp =contract.functions.getTestHistory(serializer.data['id']).call()
-        print(temp)
-        # pprint.pprint()
-        web3.personal.lockAccount(request.user.username)
+        
+        try:
+            web3.eth.defaultAccount = request.user.username
+            web3.personal.unlockAccount(request.user.username,request.data.get('password'))
+            # Create then input address and abi
+            tx_hash = contract.functions.setTestHistory(serializer.data['id'],user[0].username,web3.toWei(serializer.data['price'], 'ether')).transact()
+            web3.eth.waitForTransactionReceipt(tx_hash)
+            temp =contract.functions.getTestHistory(serializer.data['id']).call()
+            # web3.eth.dsendTransaction({"to":Web3.toChecksumAddress('0x9719da17bc47c5851414c6707bab09df1038bbaa'), 'from':request.user.username, 'value':web3.toWei("0.5", "ether"), 'gas':90000})
+            web3.personal.lockAccount(request.user.username)
+        except Exception as e:
+            TestHistory.objects.get(id=serializer.data['id']).delete()
+            raise api_utils.BadRequest(e)
+            
+        
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=HTTP_201_CREATED, headers=headers)
-class UpdateTestHistory(generics.UpdateAPIView):
+        ret = {}
+        ret['data']=serializer.data
+        ret['block_chain']=temp
+        return Response(ret, status=HTTP_201_CREATED, headers=headers)
+
+class UpdateTestHistory(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = CreateTestHistorySerializer
+    serializer_class = DoctorUpdateResultSerializer
     queryset = TestHistory
 
     def get_serializer_class(self):
-        if self.request.user.role==UserBase.CONST_ROLE_PATIENT:
-            return UserRatingSerializer
+        try:
+            if self.request.method == 'GET':
+                return UserTestHistorySerializer
+            if self.request.user.role==UserBase.CONST_ROLE_PATIENT:
+                return UserRatingSerializer
+        except:
+            pass        
         return DoctorUpdateResultSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        ret = {}
+        ret['data']=serializer.data
+        web3.eth.defaultAccount = request.user.username
+        block_chain = []
+        try:
+            block_chain = contract.functions.getTestHistory(instance.id).call()
+        except Exception as e:
+            pass
+        ret['blockchain']= block_chain
+        return Response(ret)
 
     def patch(self, request, *args, **kwargs):
         if self.request.user.role==UserBase.CONST_ROLE_PATIENT:
@@ -170,36 +193,50 @@ class UpdateTestHistory(generics.UpdateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
-        contract = web3.eth.contract(
-            address= '0x7dF41bc443c1aBEb32340435127b6DA82cF4a5b3',
-            abi='''[ { "constant": true, "inputs": [ { "name": "", "type": "uint256" } ], "name": "testHistoriesAccts", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x04f7f327" }, { "constant": true, "inputs": [], "name": "getBalance", "outputs": [ { "name": "", "type": "uint256", "value": "0" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x12065fe0" }, { "constant": true, "inputs": [ { "name": "", "type": "address" } ], "name": "balances", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x27e235e3" }, { "constant": false, "inputs": [ { "name": "_id", "type": "uint256" }, { "name": "_result", "type": "string" } ], "name": "setResult", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0x31027970" }, { "constant": false, "inputs": [], "name": "withdraw", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function", "signature": "0x3ccfd60b" }, { "constant": false, "inputs": [ { "name": "_id", "type": "uint256" }, { "name": "_patient", "type": "address" }, { "name": "_price", "type": "uint256" } ], "name": "setTestHistory", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0x62a5814e" }, { "constant": true, "inputs": [ { "name": "_id", "type": "uint256" } ], "name": "getTestHistory", "outputs": [ { "name": "", "type": "address" }, { "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0xad601c88" }, { "constant": false, "inputs": [], "name": "deposit", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0xd0e30db0" } ]''',
-        )
-        if not instance.result==None:
+        web3.eth.defaultAccount = request.user.username
+        web3.personal.unlockAccount(request.user.username,request.data.get('password'))
+
+        block_chain = []
+        if 'result' in request.data:
+            temp = instance.get_result_display()
             try:
-                tx_hash = contract.function.setResult(instance.id, instance.result).transact()
+                tx_hash = contract.functions.setResult(instance.id,str(temp)).transact({'gas': 3000000, 'from': request.user.username})
+                print (tx_hash)
+                web3.eth.waitForTransactionReceipt(tx_hash)
+                instance.status = TestHistory.CONST_STATUS_RATING
+                instance.save()
+            except Exception as e:
+                raise e
+                # raise api_utils.BadRequest("CANOT CHANGE RESULT")
+
+        if 'doctor_star' in request.data and not request.data['doctor_star']==None:
+            print("lalal")
+            try:
+                tx_hash = contract.functions.rating(instance.id, int(request.data['doctor_star'])).transact({'gas': 3000000, 'from': request.user.username})
                 web3.eth.waitForTransactionReceipt(tx_hash)
             except Exception as e:
                 raise e
+
+        block_chain = contract.functions.getTestHistory(instance.id).call()
+        # web3.personal.lockAccount(request.user.username)
+
 
         if getattr(instance, '_prefetched_objects_cache', None):
             # If 'prefetch_related' has been applied to a queryset, we need to
             # forcibly invalidate the prefetch cache on the instance.
             instance._prefetched_objects_cache = {}
-        return Response(serializer.data)
+        ret = {}
+        ret['data']=serializer.data
+        ret['blockchain']= block_chain
+        return Response(ret)
+
 class UserDeposit(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
         web3.eth.defaultAccount = request.user.username
         web3.personal.unlockAccount(request.user.username,request.data.get('password'))
-        contract = web3.eth.contract(
-            address= '0x7dF41bc443c1aBEb32340435127b6DA82cF4a5b3',
-            abi='''[ { "constant": true, "inputs": [ { "name": "", "type": "uint256" } ], "name": "testHistoriesAccts", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x04f7f327" }, { "constant": true, "inputs": [], "name": "getBalance", "outputs": [ { "name": "", "type": "uint256", "value": "0" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x12065fe0" }, { "constant": true, "inputs": [ { "name": "", "type": "address" } ], "name": "balances", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0x27e235e3" }, { "constant": false, "inputs": [ { "name": "_id", "type": "uint256" }, { "name": "_result", "type": "string" } ], "name": "setResult", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0x31027970" }, { "constant": false, "inputs": [], "name": "withdraw", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function", "signature": "0x3ccfd60b" }, { "constant": false, "inputs": [ { "name": "_id", "type": "uint256" }, { "name": "_patient", "type": "address" }, { "name": "_price", "type": "uint256" } ], "name": "setTestHistory", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0x62a5814e" }, { "constant": true, "inputs": [ { "name": "_id", "type": "uint256" } ], "name": "getTestHistory", "outputs": [ { "name": "", "type": "address" }, { "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function", "signature": "0xad601c88" }, { "constant": false, "inputs": [], "name": "deposit", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function", "signature": "0xd0e30db0" } ]''',
-        )
-        print( "coca")
-        tx_hash = contract.functions.deposit().transact()
-        print( "coca")
-        web3.eth.waitForTransactionReceipt(tx_hash)
+        # Deposit to contract
         web3.personal.lockAccount(request.user.username)
         return Response({'status':'done'},status=HTTP_200_OK)
 

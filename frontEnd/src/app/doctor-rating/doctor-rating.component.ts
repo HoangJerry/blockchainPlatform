@@ -33,7 +33,22 @@ export class DoctorRatingComponent implements OnInit {
   onChangeStar = (data) =>{
   	console.log(data);
   	this.current_rating.doctor_star=data;
-  	this.http.updateUserTestHistory(this.current_rating).subscribe((s)=>{this.getCurrentRating();});
+  }
+  onUpdateStar = () =>{
+  	this.http.updateUserTestHistory(this.current_rating).subscribe((s)=>{this.getCurrentRating();},
+        (error)=>{
+        if (error.error.detail!=undefined){
+                    this.toastyService.error(error.error.detail);
+                }
+            else{
+              for( let key in error.error){
+                console.log(key);
+                  let x = 'error.error.'+key;
+                  this.toastyService.error(key.toUpperCase()+": "+eval(x)[0]);
+              }
+            }       
+      }
+      );
   	
   }
 

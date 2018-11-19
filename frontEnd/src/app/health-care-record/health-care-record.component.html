@@ -190,7 +190,9 @@
                             <th onclick="sortTable6(1)">Name of Test<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
                             <th onclick="sortTable6(2)">Patient<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
                             <th onclick="sortTable6(2)">Status<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
-
+                            <th onclick="sortTable6(2)">Deposit money<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+                            <th onclick="sortTable6(2)">Result<i class="fa fa-fw fa-sort" style="float: right;"></i></th>
+            
 
                         </tr>
                     </thead>
@@ -200,8 +202,30 @@
                             <td>{{test.name_of_test}}</td>
                             <td>{{test.user.full_name}}</td>
                             <td>{{test.status}}</td>
+                            <td>{{test.block_chain[3]?'paymented':test.block_chain[4]}}</td>
+                            <td *ngIf="test.block_chain[3]">
+                                {{test.block_chain[1]}}
+                            </td>
+                            <td *ngIf="test.block_chain[3]==false"><select class="form-control" [(ngModel)]="test.result" (change)="onChangeResult(test);myModal.open();">
+                              <option value="10" disabled="{{test.block_chain[4]?'':'disabled'}}">Good</option>
+                              <option value="0" disabled="{{test.block_chain[4]?'':'disabled'}}">Bad</option>
+                            </select></td>
                         </tr>
                     </tbody>
                 </table>
     </div>
 </div>
+<modal #myModal>
+        <modal-header>
+            <h4>Verify by your password</h4>
+        </modal-header>
+        <modal-content>
+            <div class="form-group" *ngIf="selected!=undefined">
+                <input class="password-input form-control" type="password" name="password" [(ngModel)]="selected.password" autocomplete="off" placeholder="Password">
+            </div>
+        </modal-content>
+        <modal-footer>
+            <button class="btn btn-primary" (click)="onSubmit();myModal.close()">submit</button>
+            <button class="btn btn-danger" (click)="myModal.close()">cancel</button>
+        </modal-footer>
+</modal>

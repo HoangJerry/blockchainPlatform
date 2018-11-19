@@ -9,7 +9,7 @@
 <div class="page-head">
 	<div class="">
 		<label>Patient Address </label>
-		<input type="text" name="address" [(ngModel)]="test.user" autocomplete="off">
+		<input type="text" name="address" style="width: 600px" [(ngModel)]="test.user" autocomplete="off">
 	</div>
 	<div class="">
 		<label>Name of test </label>
@@ -21,5 +21,19 @@
 		<label>Price </label>
 		<input type="number" name="price" [(ngModel)]="test.price" autocomplete="off">
 	</div>
-	<button type="button" class="btn btn-warning" (click)="onClickCreate()">Create</button>
+	<button type="button" class="btn btn-warning" (click)="myModal.open()">Create</button>
 </div>
+<modal #myModal>
+        <modal-header>
+            <h4>Verify by your password</h4>
+        </modal-header>
+        <modal-content>
+	        <div class="form-group">
+				<input class="password-input form-control" type="password" name="password" [(ngModel)]="test.password" autocomplete="off" placeholder="Password">
+			</div>
+        </modal-content>
+        <modal-footer>
+            <button class="btn btn-primary" (click)="onClickCreate();">submit</button>
+            <button class="btn btn-danger" (click)="myModal.close()">cancel</button>
+        </modal-footer>
+</modal>

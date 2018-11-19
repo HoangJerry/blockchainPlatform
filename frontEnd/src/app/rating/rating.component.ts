@@ -8,6 +8,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 export class RatingComponent implements OnInit {
   @Input() 
   set selectedData(name: any) {
+    console.log(name);
     this.selected = name;
   }
   selected:any;

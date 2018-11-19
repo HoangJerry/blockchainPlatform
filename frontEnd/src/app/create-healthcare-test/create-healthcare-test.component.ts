@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../http.service'
 import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 import { Router }                   from '@angular/router'
+import {ModalModule} from "ng2-modal";
 
 @Component({
   selector: 'app-create-healthcare-test',

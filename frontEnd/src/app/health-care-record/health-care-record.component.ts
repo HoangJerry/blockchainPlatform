@@ -9,26 +9,35 @@ export class HealthCareRecordComponent implements OnInit {
   user:any = new Object;
   userTestHistories:any;
   doctorTestHistories:any;
+  selected:any
   constructor(private http:HttpService) {
-  	this.http.getUserInfor().subscribe((data)=>{
-  		this.user = data;
+  	this.getStart();
+  }
+
+  ngOnInit() {
+  }
+  getStart = () =>{
+    this.http.getUserInfor().subscribe((data)=>{
+      this.user = data;
       if (this.user.role==0){
         this.http.getDoctorTestHistory().subscribe((d:any)=>{
           this.doctorTestHistories=d.results;
         })
       }
-  	})
+    })
 
-  	this.http.getUserTestHistory().subscribe((data:any)=>{
-  		this.userTestHistories = data.results;
-  		console.log(data);
-  	})
+    this.http.getUserTestHistory().subscribe((data:any)=>{
+      this.userTestHistories = data.results;
+      console.log(data);
+    })
   }
-
-  ngOnInit() {
-  }
-
   onChangeUser(){
   	this.http.updateUser(this.user)
+  }
+  onSubmit = () =>{
+    this.http.updateUserTestHistory(this.selected).subscribe((data)=>this.getStart())
+  }
+  onChangeResult = (test) => {
+    this.selected=test;
   }
 }

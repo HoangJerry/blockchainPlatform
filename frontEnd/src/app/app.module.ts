@@ -19,6 +19,7 @@ import { MyWalletComponent } from './my-wallet/my-wallet.component';
 import { HealthCareRecordComponent } from './health-care-record/health-care-record.component';
 import { DoctorRatingComponent } from './doctor-rating/doctor-rating.component';
 import { HistoryTransactionComponent } from './history-transaction/history-transaction.component';
+import { ModalModule } from "ng2-modal";
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { HistoryTransactionComponent } from './history-transaction/history-trans
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    ModalModule,
     ToastyModule.forRoot(),
   ],
   providers: [AuthGuard,AuthService,DoctorGuard],

@@ -14,3 +14,7 @@ input:focus,select:focus{
 	outline: none;
 	border-bottom: 1px #3d3d3d solid;
 }
+.password-input{
+	width: 100%;
+	border-bottom: 1px solid black;
+}
